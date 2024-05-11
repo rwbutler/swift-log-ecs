@@ -2,7 +2,6 @@
 //  DictionaryAdditions.swift
 //
 
-import Collections
 import Foundation
 
 public extension Dictionary {

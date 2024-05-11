@@ -6,21 +6,21 @@ let package = Package(
     name: "swift-log-ecs",
     products: [
         .library(
-            name: "SwiftECSLogging",
-            targets: ["SwiftECSLogging"]),
+            name: "ECSLogging",
+            targets: ["ECSLogging"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.5.0")
     ],
     targets: [
         .target(
-            name: "SwiftECSLogging",
+            name: "ECSLogging",
             dependencies: [
                 .product(name: "Logging", package: "swift-log")
             ]
         ),
         .testTarget(
-            name: "SwiftECSLoggingTests",
-            dependencies: ["SwiftECSLogging"]),
+            name: "ECSLoggingTests",
+            dependencies: ["ECSLogging"]),
     ]
 )

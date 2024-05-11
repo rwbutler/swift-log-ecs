@@ -1,5 +1,5 @@
 import XCTest
-@testable import swift_log_ecs
+@testable import SwiftECSLogging
 
 final class swift_log_ecsTests: XCTestCase {
     func testExample() throws {

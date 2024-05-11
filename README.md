@@ -54,6 +54,14 @@ LoggingSystem.bootstrap { label in
 ```
 
 ### Chaining LogHandlers
+If you wish to send your ECS formatted log messages somewhere other than the console, it’s possible to chain log handlers by passing in another `LogHandler` as follows:
+
+```swift
+let consoleLogger = ConsoleLogger(label: label, console: console, level: level)
+return ECSLogHandler(label: label, logHandler: consoleLogger, logLevel: level)
+```
+
+This will cause the `ECSLogHandler` to format log messages according to the ECS Logging standard before forwarding the log messages on to the next `LogHandler`.
 
 ## How It Works
 

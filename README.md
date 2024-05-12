@@ -63,6 +63,71 @@ return ECSLogHandler(label: label, logHandler: consoleLogger, logLevel: level)
 
 This will cause the `ECSLogHandler` to format log messages according to the ECS Logging standard before forwarding the log messages on to the next `LogHandler`.
 
+### Usage With Vapor
+
+The default log handler included with SwiftLog is `StreamLogHandler` whilst the default LogHandler for Vapor is `ConsoleLogger` (from [ConsoleKit](https://github.com/vapor/console-kit)) when you call the following bootstrapping code:
+
+```swift
+var env = try Environment.detect()
+try LoggingSystem.bootstrap(from: &env)
+```
+
+To use `ECSLogHandler` instead, add the following extension to your Vapor project:
+
+```swift
+import Foundation
+import Logging
+import ECSLogging
+import Vapor
+
+extension LoggingSystem {
+    public static func bootstrapECSLogging(from environment: inout Environment) throws {
+        try self.bootstrap(from: &environment) { level in
+            return { (label: String) in
+                return ECSLogHandler(label: label, logLevel: level)
+            }
+        }
+    }
+}
+```
+
+Or if you prefer to use a combination of both:
+
+```swift
+import Foundation
+import Logging
+import ECSLogging
+import ConsoleKit
+import Vapor
+
+extension LoggingSystem {
+    public static func bootstrapECSLogging(from environment: inout Environment) throws {
+        try self.bootstrap(from: &environment) { level in
+            let console = Terminal()
+            return { (label: String) in
+                let consoleLogger = ConsoleLogger(label: label, console: console, level: level)
+                return ECSLogHandler(label: label, logHandler: consoleLogger, logLevel: level)
+            }
+        }
+    }
+}
+
+```
+
+Then instead of calling the following in your `main.swift`:
+
+```swift
+var env = try Environment.detect()
+try LoggingSystem.bootstrap(from: &env)
+```
+
+Instead call:
+
+```swift
+var env = try Environment.detect()
+LoggingSystem.bootstrapECSLogging(from: &env)
+```
+
 ## How It Works
 
 The SwiftLog package provides the `Logger` which clients should use. A `LogHandler` is a specific logging implementation e.g. to log to a file, to log to the console, to log to a monitoring solution such as Datadog or Sentry. `swift-log-ecs` provides the `ECSLogHandler` for logging messages in ECS Log format.

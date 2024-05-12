@@ -125,7 +125,7 @@ Instead call:
 
 ```swift
 var env = try Environment.detect()
-LoggingSystem.bootstrapECSLogging(from: &env)
+try LoggingSystem.bootstrapECSLogging(from: &env)
 ```
 
 ## How It Works

@@ -8,6 +8,8 @@
 import Foundation
 
 public enum ECSLogField: CustomStringConvertible, Hashable, Codable {
+    case ecsVersion
+    
     // Default fields.
     case timestamp
     case logLevel
@@ -32,6 +34,8 @@ public enum ECSLogField: CustomStringConvertible, Hashable, Codable {
     
     public var description: String {
         switch self {
+        case .ecsVersion:
+            return "ecs.version"
         case .timestamp:
             return "@timestamp"
         case .logLevel:

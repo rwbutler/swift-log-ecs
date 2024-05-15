@@ -50,7 +50,8 @@ public struct ECSLogHandler: LogHandler {
             .logger: label,
             .file: file,
             .line: "\(line)",
-            .function: function
+            .function: function,
+            .ecsVersion: "8.11.0"
         ]
         // Add thread name if available.
         if let threadName = Thread.current.name {

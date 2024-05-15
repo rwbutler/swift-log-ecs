@@ -42,7 +42,7 @@ public struct ECSLogHandler: LogHandler {
         line: UInt
     ) {
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = .withFractionalSeconds
+        formatter.formatOptions.insert(.withFractionalSeconds)
         let formattedDate = formatter.string(from: Date())
         var json: Dictionary<ECSLogField, Any> = [
             .timestamp: formattedDate,

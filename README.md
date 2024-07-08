@@ -23,11 +23,9 @@
 - [x] Compatible with [Vapor](https://vapor.codes)
 - [x] Support for custom events not defined as part of the [ECS Log](https://www.elastic.co/guide/en/ecs/current/ecs-log.html) fields
 - [x] Supports additional key-value pairs which can be attached to and sent with every log event [i.e. SwiftLog metadata](https://github.com/apple/swift-log#logging-metadata)
+- [x] Use ECS format logging in production falling back to regular logging format for development
 
 ## Installation
-
-
-
 
 ### Swift Package Manager
 

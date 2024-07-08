@@ -12,6 +12,7 @@ public struct ECSLogHandler: LogHandler {
     private static let timestampSubstitute = "_1"
     private static let logLevelSubstitute = "_2"
     private static let messageSubstitute = "_3"
+    public let isDevelopment: Bool
     public let label: String
     public let logHandler: LogHandler?
     public var logLevel: Logger.Level
@@ -19,12 +20,14 @@ public struct ECSLogHandler: LogHandler {
     public var prettyPrint: Bool
     
     public init(
+        isDevelopment: Bool = false,
         label: String,
         logHandler: LogHandler? = nil,
         logLevel: Logger.Level = .info,
         metadata: Logger.Metadata = [:],
         prettyPrint: Bool = false
     ) {
+        self.isDevelopment = isDevelopment
         self.label = label
         self.logHandler = logHandler
         self.logLevel = logLevel
@@ -100,14 +103,16 @@ public struct ECSLogHandler: LogHandler {
         jsonMessage = jsonMessage.replacingOccurrences(of: Self.logLevelSubstitute, with: ECSLogField.logLevel.description)
         jsonMessage = jsonMessage.replacingOccurrences(of: Self.messageSubstitute, with: ECSLogField.message.description)
         
+        let logMessage = isDevelopment ? message.description : jsonMessage
+        
         guard let logHandler = logHandler else {
-            print(jsonMessage)
+            print(logMessage)
             fflush(stdout)
             return
         }
         logHandler.log(
             level: level,
-            message: .init(stringLiteral: jsonMessage),
+            message: .init(stringLiteral: logMessage),
             metadata: metadata,
             source: source,
             file: file,

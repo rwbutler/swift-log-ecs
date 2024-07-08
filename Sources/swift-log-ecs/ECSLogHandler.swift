@@ -44,6 +44,10 @@ public struct ECSLogHandler: LogHandler {
         function: String,
         line: UInt
     ) {
+
+        
+        
+        
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions.insert(.withFractionalSeconds)
         let formattedDate = formatter.string(from: Date())
@@ -74,6 +78,20 @@ public struct ECSLogHandler: LogHandler {
             }
         }
        
+        // Check whether the message was already ECS formatted.
+        let messageData = Data(message.description.utf8)
+        do {
+            if let messageJSON = try JSONSerialization.jsonObject(with: messageData, options: [.fragmentsAllowed]) as? [ECSLogField: Any] {
+                let originalMessage = messageJSON[.message]
+                json.merge(messageJSON) { lhs, rhs in
+                    lhs
+                }
+                json[.message] = originalMessage ?? json[.message]
+            }
+        } catch _ {
+            // Original message was not an ECS-formatted message.
+        }
+        
         var mappedJSON = json.mapKeys { // Map ECSLogFields to Strings.
             $0.description
         }

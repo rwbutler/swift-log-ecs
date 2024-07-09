@@ -31,7 +31,10 @@ public extension Logger {
             json[.errorStackTrace] = trace
         }
 #endif
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: json, options: []),
+        let mappedJSON = json.mapKeys { // Map ECSLogFields to Strings.
+            $0.description
+        }
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: mappedJSON, options: []),
               let jsonMessage = String(data: jsonData, encoding: .utf8) else {
             return
         }

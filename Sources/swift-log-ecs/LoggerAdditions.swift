@@ -27,8 +27,8 @@ public extension Logger {
             .errorMessage: error.localizedDescription
         ]
 #if canImport(_Backtracing)
-        if let trace = try? Backtrace.capture(algorithm: .precise).symbolicated() {
-            json[.errorStackTrace] = trace
+        if let trace = try? Backtrace.capture(algorithm: .auto).symbolicated() {
+            json[.errorStackTrace] = trace.description
         }
 #endif
         let mappedJSON = json.mapKeys { // Map ECSLogFields to Strings.

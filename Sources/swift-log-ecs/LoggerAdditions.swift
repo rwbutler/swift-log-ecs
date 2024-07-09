@@ -11,10 +11,11 @@ import _Backtracing
 import Foundation
 import Logging
 
-extension Logger {
-    public func error(
+public extension Logger {
+    func error(
         _ error: @autoclosure () -> Error,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
         file: String = #fileID,
         function: String = #function,
         line: UInt = #line
@@ -37,7 +38,7 @@ extension Logger {
         self.error(
             Logger.Message(stringLiteral: jsonMessage),
             metadata: metadata(),
-            source: nil,
+            source: source(),
             file: file,
             function: function,
             line: line

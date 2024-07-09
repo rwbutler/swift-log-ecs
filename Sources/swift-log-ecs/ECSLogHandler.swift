@@ -44,10 +44,6 @@ public struct ECSLogHandler: LogHandler {
         function: String,
         line: UInt
     ) {
-
-        
-        
-        
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions.insert(.withFractionalSeconds)
         let formattedDate = formatter.string(from: Date())

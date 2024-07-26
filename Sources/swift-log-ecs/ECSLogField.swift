@@ -30,6 +30,12 @@ public enum ECSLogField: CustomStringConvertible, Hashable, Codable {
     case serviceNodeName
     case eventDataset
     
+    // User agent fields.
+    case userAgentDeviceName
+    case userAgentName
+    case userAgentOriginal
+    case userAgentVersion
+    
     case custom(String)
     
     public var description: String {
@@ -68,6 +74,14 @@ public enum ECSLogField: CustomStringConvertible, Hashable, Codable {
             return "service.node.name"
         case .eventDataset:
             return "event.dataset"
+        case .userAgentDeviceName:
+            return "user_agent.device.name"
+        case .userAgentName:
+            return "user_agent.name"
+        case .userAgentOriginal:
+            return "user_agent.original"
+        case .userAgentVersion:
+            return "user_agent.version"
         case .custom(let stringValue):
             return stringValue
         }

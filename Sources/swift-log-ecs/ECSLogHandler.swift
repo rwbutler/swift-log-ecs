@@ -73,19 +73,71 @@ public struct ECSLogHandler: LogHandler {
                 }
             }
         }
-       
+        var properties: [ECSLogField: Any] = [:]
         // Check whether the message was already ECS formatted.
         let messageData = Data(message.description.utf8)
         do {
             if let messageJSON = try JSONSerialization.jsonObject(with: messageData, options: [.fragmentsAllowed]) as? [ECSLogField: Any] {
-                let originalMessage = messageJSON[.message]
-                json.merge(messageJSON) { lhs, rhs in
-                    lhs
-                }
-                json[.message] = originalMessage ?? json[.message]
+                properties = messageJSON
             }
         } catch _ {
             // Original message was not an ECS-formatted message.
+        }
+        log(
+            level: level,
+            message: message,
+            metadata: metadata,
+            source: source,
+            file: file,
+            function: function,
+            line: line,
+            properties: properties
+        )
+    }
+    
+    public func log(
+        level: Logger.Level,
+        message: Logger.Message,
+        metadata: Logger.Metadata?,
+        source: String,
+        file: String,
+        function: String,
+        line: UInt,
+        properties: [ECSLogField: Any]
+    ) {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions.insert(.withFractionalSeconds)
+        let formattedDate = formatter.string(from: Date())
+        var json: [ECSLogField: Any] = [
+            .timestamp: formattedDate,
+            .logLevel: level.rawValue.uppercased(),
+            .message: message.description,
+            .logger: label,
+            .file: file,
+            .line: "\(line)",
+            .function: function,
+            .ecsVersion: "8.11.0"
+        ]
+        // Add thread name if available.
+        if let threadName = Thread.current.name {
+            json[.processThreadName] = threadName
+        }
+        if let metadata = metadata {
+            for (key, value) in metadata {
+                switch value {
+                case .array, .dictionary:
+                    json[.custom("custom.\(key)")] = unwrapMetadataValue(value)
+                    continue
+                case .string, .stringConvertible:
+                    json[.custom("labels.\(key)")] = unwrapMetadataValue(value)
+                    continue
+                }
+            }
+        }
+       
+        // Override defaults with user properties if set.
+        json.merge(properties) { lhs, rhs in
+            rhs
         }
         
         var mappedJSON = json.mapKeys { // Map ECSLogFields to Strings.
